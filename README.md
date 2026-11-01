@@ -1,6 +1,13 @@
-# CopyPop 1.0
+# CopyPop 1.0.1
 
 原生 SwiftUI + AppKit 菜单栏复制 HUD，适用于 macOS 13 或更新版本，支持 Apple Silicon 和 Intel。
+
+## 应用图标
+
+浅色白底、深色石墨灰底，使用 03「错落键帽」方案，⌘ 与 C 前后错落。运行时应用图标跟随系统外观切换；菜单栏使用自动适配的单色 ⌘ C。Finder 和未运行应用的安装图标使用白底版。
+
+![浅色图标](Assets/AppIcon.png)
+![深色图标](Assets/AppIcon-dark.png)
 
 ## 界面预览
 
@@ -10,9 +17,9 @@
 
 ## 运行与安装
 
-从仓库的 [Releases](../../releases) 下载 `CopyPop-macOS.zip`。
+从仓库的 [Releases](../../releases) 下载 `CopyPop-v1.0.1-macOS.zip`。
 
-解压 CopyPop-macOS.zip，双击 CopyPop.app。也可以先将它拖到“应用程序”再运行；授权前最好先固定安装位置。应用没有主窗口，入口在菜单栏的剪贴板图标。
+解压 CopyPop-v1.0.1-macOS.zip，双击 CopyPop.app。也可以先将它拖到“应用程序”再运行；授权前最好先固定安装位置。应用没有主窗口，入口在菜单栏的 ⌘ C 图标。
 
 本交付使用本地临时签名，未经过 Apple 开发者签名或公证。如果系统拦截，请在确认来源后通过“系统设置 → 隐私与安全性 → 仍要打开”放行。无需关闭系统安全保护。
 

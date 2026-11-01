@@ -85,17 +85,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var status: NSStatusItem!
     var paused = false
     var demoCount = 0
+    var appliedIconName = ""
+    var appearanceObserver: NSKeyValueObservation?
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        appearanceObserver = NSApp.observe(\.effectiveAppearance, options: [.initial, .new]) { [weak self] app, _ in
+            self?.updateAppIcon(app.effectiveAppearance)
+        }
         lastChange = board.changeCount
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        status.button?.image = NSImage(systemSymbolName: "doc.on.clipboard", accessibilityDescription: "CopyPop")
+        let menuIcon = NSImage(size: NSSize(width: 34, height: 18), flipped: false) { _ in
+            ("⌘ C" as NSString).draw(at: NSPoint(x: 0, y: 0), withAttributes: [.font: NSFont.systemFont(ofSize: 14, weight: .medium), .foregroundColor: NSColor.black])
+            return true
+        }
+        menuIcon.isTemplate = true
+        menuIcon.accessibilityDescription = "CopyPop"
+        status.button?.image = menuIcon
         if let index = CommandLine.arguments.firstIndex(of: "--verify-ui"), CommandLine.arguments.count > index + 1 {
             verifyUI(directory: CommandLine.arguments[index + 1]); return
         }
         installTap(); updateMenu()
         timer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in self?.poll() }
         if CommandLine.arguments.contains("--preview") { preview() }
+    }
+    func updateAppIcon(_ appearance: NSAppearance) {
+        let dark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        let name = dark ? "AppIcon-dark" : "AppIcon"
+        if let url = Bundle.main.url(forResource: name, withExtension: "png"), let icon = NSImage(contentsOf: url) {
+            NSApp.applicationIconImage = icon
+            appliedIconName = name
+        }
     }
     func verifyUI(directory: String) {
         let suite = "CopyPopVerification.\(UUID())"
@@ -123,8 +142,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for (index, appearance) in [NSAppearance.Name.aqua, .darkAqua].enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.6) {
                 self.hud.panel.appearance = NSAppearance(named: appearance)
+                NSApp.appearance = NSAppearance(named: appearance)
+                let iconName = index == 0 ? "AppIcon" : "AppIcon-dark"
+                let iconURL = Bundle.main.url(forResource: iconName, withExtension: "png")
+                let expectedIcon = iconURL.flatMap { NSImage(contentsOf: $0) }
                 self.hud.show(title: self.message(index + 1), total: 28, key: "⌘ C", repeated: index > 0)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    results[index == 0 ? "lightIconLoaded" : "darkIconLoaded"] = expectedIcon != nil && self.appliedIconName == iconName
                     let view = self.hud.panel.contentView!
                     view.layoutSubtreeIfNeeded()
                     if let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) {

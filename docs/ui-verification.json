@@ -1,10 +1,12 @@
 {
   "alphaAfterFade" : 0,
   "darkHeight" : 72,
+  "darkIconLoaded" : true,
   "emptyClipboardDoesNotCount" : true,
   "interleavedClipboardCount" : 3,
   "interleavedRepeatRecognized" : true,
   "lightHeight" : 72,
+  "lightIconLoaded" : true,
   "previewDidNotCount" : true,
   "unconfirmedDoesNotCount" : true,
   "windowCount" : 1
